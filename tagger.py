@@ -19,7 +19,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Generate a structured JSON object (tag/title/description/rating) "
-            "using local transformers inference with google/gemma-4-31b-it."
+            "using local transformers inference with google/gemma-4-E4B-it."
         )
     )
     input_group = parser.add_mutually_exclusive_group(required=True)
@@ -78,7 +78,8 @@ def _coerce_payload(data: Any) -> dict[str, Any]:
     title = data.get("title", "")
     description = data.get("description", "")
     rating = data.get("rating", 0)
-
+    reason_for_rating = data.get("reason_for_rating", "")
+    
     if not isinstance(tags, list):
         tags = [str(tags)]
     tags = [str(t).strip() for t in tags if str(t).strip()]
@@ -97,6 +98,7 @@ def _coerce_payload(data: Any) -> dict[str, Any]:
         "title": title,
         "description": description,
         "rating": rating,
+        "reason_for_rating": reason_for_rating,
     }
 
 
@@ -108,7 +110,8 @@ def build_messages(prompt: str) -> list[dict[str, Any]]:
         '  "tag": string[],\n'
         '  "title": string,\n'
         '  "description": string,\n'
-        '  "rating": integer (1-10)\n'
+        '  "rating": integer (1-10),\n'
+        '  "reason_for_rating": string,\n'
         "}\n"
         "Do not include markdown or extra keys."
     )
